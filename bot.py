@@ -77,6 +77,7 @@ def check_jobs():
 
 # Main Loop
 if __name__ == "__main__":
+    send_telegram("🚀 Bot is now LIVE and tracking Canada jobs!")
     while True:
         check_jobs()
         # Sleep for 10 minutes (600 seconds) to avoid getting blocked by Job Bank
