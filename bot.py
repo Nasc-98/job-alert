@@ -48,37 +48,36 @@ def is_international_friendly(job_url):
         return False
     except:
         return False
-
-def check_jobs():
-    print("Checking for new LMIA jobs...")
+    def check_jobs():
+    print("Scanning Job Bank...")
+    headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/120.0.0.0"}
     try:
-        response = requests.get(URL, timeout=15)
+        response = requests.get(URL, headers=headers, timeout=15)
         soup = BeautifulSoup(response.text, "html.parser")
         jobs = soup.find_all("article")
 
         for job in jobs:
             title_tag = job.find("a")
             if title_tag:
-                job_title = title_tag.text.strip()
                 link = "https://www.jobbank.gc.ca" + title_tag["href"]
-
                 if link not in seen_jobs:
-                    # Check if it's truly open to international candidates
                     if is_international_friendly(link):
-                        seen_jobs.add(link)
+                        job_title = title_tag.text.strip()
                         message = f"<b>🇨🇦 NEW LMIA JOB</b>\n\n<b>Role:</b> {job_title}\n<b>Link:</b> {link}"
                         send_telegram(message)
                         print(f"Alert sent: {job_title}")
-                    else:
-                        # Mark as seen so we don't scan it again, even if not international
-                        seen_jobs.add(link)
+                    seen_jobs.add(link)
     except Exception as e:
-        print(f"Error during job check: {e}")
+        print(f"Scraping Error: {e}")
 
-# Main Loop
+# 3. THE INFINITE LOOP (The part that keeps it running)
 if __name__ == "__main__":
-    send_telegram("🚀 Bot is now LIVE and tracking Canada jobs!")
+    # This confirms the bot is alive on your phone immediately
+    send_telegram("🚀 <b>LMIA Job Tracker is now LIVE!</b>\nSearching for Canada jobs...")
+    
     while True:
         check_jobs()
-        # Sleep for 10 minutes (600 seconds) to avoid getting blocked by Job Bank
-        time.sleep(600)
+        # Wait 15 minutes (900 seconds) so you don't get banned
+        time.sleep(900)
+
+
